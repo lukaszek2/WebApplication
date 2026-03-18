@@ -1,48 +1,48 @@
 package com.uep.wap.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name="students")
-public class Student{
-    @Id
-    @Column(name ="id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @Column(name ="name")
-    private String name;
-    @Column(name ="points")
+@Table(name = "students")
+public class Student extends User {
+
+    @Column(name = "points")
     private Integer points;
 
-    public void setId(long id){
-        this.id = id;
-    }
-    public long getId(){
-        return id;
-    }
-    public Student(){
+    @OneToMany(mappedBy = "student")
+    private List<Enrollment> enrolledCourses = new ArrayList<>();
 
-    }
+    @OneToMany
+    @JoinTable(
+        name = "student_completed_resources",
+        joinColumns = @JoinColumn(name = "student_id"),
+        inverseJoinColumns = @JoinColumn(name = "resource_id")
+    )
+    private List<Resource> completedResources = new ArrayList<>();
 
-    public String getName() {
-        return name;
-    }
+    public Student() {}
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getPoints() {
-        return points;
-    }
-
-    public void setPoints(Integer points) {
+    public Student(String name, Integer points) {
+        setName(name);
         this.points = points;
     }
 
-    public Student(String name, Integer points){
+    public Integer getPoints() { return points; }
+    public void setPoints(Integer points) { this.points = points; }
 
+    public List<Enrollment> getEnrolledCourses() { return enrolledCourses; }
+    public void setEnrolledCourses(List<Enrollment> enrolledCourses) { this.enrolledCourses = enrolledCourses; }
+
+    public List<Resource> getCompletedResources() { return completedResources; }
+    public void setCompletedResources(List<Resource> completedResources) { this.completedResources = completedResources; }
+
+    public void markComplete(Long resourceId) {
+        // logika oznaczania zasobu jako ukończonego
+    }
+
+    public double getProgress(Long courseId) {
+        return 0.0;
     }
 }
-
-
