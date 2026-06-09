@@ -6,3 +6,7 @@ target/
 .vscode/
 *.log
 uploads/
+
+target/
+uploads/
+.DS_Store
