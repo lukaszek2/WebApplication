@@ -2,6 +2,7 @@ package com.edututor.controller;
 
 import com.edututor.dto.admin.AdminStatsResponse;
 import com.edututor.dto.admin.RoleUpdateRequest;
+import com.edututor.dto.admin.SystemLogResponse;
 import com.edututor.dto.profile.ProfileResponse;
 import com.edututor.service.AdminService;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -49,7 +49,7 @@ public class AdminController {
     }
 
     @GetMapping("/logs")
-    public ResponseEntity<Map<String, String>> getLogs() {
-        return ResponseEntity.ok(Map.of("message", "Log system not yet implemented"));
+    public ResponseEntity<List<SystemLogResponse>> getLogs() {
+        return ResponseEntity.ok(adminService.getLogs());
     }
 }

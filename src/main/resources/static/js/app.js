@@ -55,7 +55,7 @@ function renderNav() {
     links.push(["#/teacher", "Nauczyciel"], ["#/teacher/courses", "Zarządzaj kursami"],
                ["#/teacher/categories", "Kategorie"]);
   }
-  if (Auth.isAdmin()) links.push(["#/admin/users", "Użytkownicy"], ["#/admin/stats", "Statystyki"]);
+  if (Auth.isAdmin()) links.push(["#/admin/users", "Użytkownicy"], ["#/admin/stats", "Statystyki"], ["#/admin/logs", "Logi"]);
   const hash = location.hash || "#/catalog";
   $("#navLinks").innerHTML = links.map(([h, t]) =>
     `<a href="${h}" class="${hash.startsWith(h) ? "active" : ""}">${t}</a>`).join("");
@@ -85,6 +85,7 @@ const routes = [
   [/^#\/teacher\/categories$/,       viewTeacherCategories,{ role: "TEACHER" }],
   [/^#\/admin\/users$/,              viewAdminUsers,       { role: "ADMIN" }],
   [/^#\/admin\/stats$/,              viewAdminStats,       { role: "ADMIN" }],
+  [/^#\/admin\/logs$/,               viewAdminLogs,        { role: "ADMIN" }],
 ];
 
 async function router() {
@@ -696,6 +697,28 @@ async function viewAdminStats() {
       <div class="stat"><div class="value">${s.totalResources}</div><div class="label">Zasoby</div></div>
       <div class="stat"><div class="value">${s.monthlyActiveUsers}</div><div class="label">Aktywni (30 dni)</div></div>
     </div></div>`;
+}
+
+const LOG_ICON = {
+  LOGIN: "🔑", LOGIN_FAILED: "⚠️", REGISTER: "👤",
+  ROLE_CHANGE: "🔄", SUSPEND: "🚫", ACTIVATE: "✅", DELETE_USER: "🗑️"
+};
+async function viewAdminLogs() {
+  const logs = await api.get("/admin/logs");
+  appEl.innerHTML = `<div class="container">
+    <div class="page-head"><div><h1>Logi systemowe</h1>
+      <p class="muted">Ostatnie 100 zdarzeń systemowych</p></div></div>
+    ${logs.length ? `<table class="tbl"><thead><tr>
+        <th>Data</th><th>Akcja</th><th>Szczegóły</th><th>Użytkownik</th></tr></thead><tbody>
+      ${logs.map(l => `<tr>
+        <td class="muted" style="white-space:nowrap">${fmtDate(l.createdAt)}</td>
+        <td><span class="badge gray">${esc(LOG_ICON[l.action] || "")} ${esc(l.action)}</span></td>
+        <td>${esc(l.details || "—")}</td>
+        <td class="muted">${esc(l.userEmail || "—")}</td>
+      </tr>`).join("")}
+      </tbody></table>`
+    : `<div class="empty"><div class="icon">📋</div><p>Brak logów systemowych.</p></div>`}
+  </div>`;
 }
 
 /* ---------- Confirm helper ---------- */
