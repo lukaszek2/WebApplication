@@ -35,7 +35,8 @@ public class StudentController {
     @GetMapping("/api/dashboard")
     public ResponseEntity<Map<String, Object>> getDashboard() {
         User user = securityUtils.getCurrentUser();
-        long enrolled = enrollmentRepository.countByStudentId(user.getId());
+        long enrolled = 0;
+        try { enrolled = enrollmentRepository.countByStudentId(user.getId()); } catch (Exception ignored) {}
         return ResponseEntity.ok(Map.of(
                 "userId", user.getId(),
                 "name", user.getName(),

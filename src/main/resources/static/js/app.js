@@ -313,8 +313,12 @@ function openResource(encoded) {
   let body = "";
   if (r.type === "NOTE") body = `<div class="card" style="white-space:pre-wrap">${esc(r.content || "")}</div>`;
   else if (r.type === "LINK" || r.type === "VIDEO") body = `<p><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.url)}</a></p>`;
-  else if (r.type === "FILE") body = `<p>Plik: <code>${esc(r.filePath || "")}</code></p>
-    <p class="muted">Pliki są przechowywane na serwerze w katalogu uploadów.</p>`;
+  else if (r.type === "FILE") {
+    const fileName = (r.filePath || "").replace(/^.*[\\/]/, "");
+    const url = "/" + (r.filePath || "").replace(/^\.\//, "");
+    body = `<p><a class="btn" href="${esc(url)}" target="_blank" download="${esc(fileName)}">⬇ Pobierz plik</a></p>
+      <p class="muted" style="font-size:.85rem">${esc(fileName)}</p>`;
+  }
   modal(r.title, body + `<div class="modal-actions"><button class="btn ghost" onclick="closeModal()">Zamknij</button></div>`);
 }
 
